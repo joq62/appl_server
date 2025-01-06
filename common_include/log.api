@@ -1,0 +1,19 @@
+-include("sender.hrl").
+
+-define(MainLogDir,"logs").
+-define(LocalLogDir,"log.logs").
+-define(LogFile,"file").
+-define(MaxNumFiles,10).
+-define(MaxNumBytes,100000).
+
+%%%% Log Api -----------------------------------------------------------------------------
+
+-define(LOG_NOTICE(Msg,Data),rpc:cast(node(),log,notice,[Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()])).
+-define(LOG_WARNING(Msg,Data),rpc:cast(node(),log,warning,[Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()])).
+-define(LOG_ALERT(Msg,Data),rpc:cast(node(),log,alert,[Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()])).
+-define(LOG_DEBUG(Msg,Data),rpc:cast(node(),log,debug,[Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()])).
+
+%-define(LOG_NOTICE(Msg,Data),sd:call(log,{notice,Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()},5000)).
+%-define(LOG_WARNING(Msg,Data),sd:call(log,{warning,Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()},5000)).
+%-define(LOG_ALERT(Msg,Data),sd:call(log,{alert,Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()},5000)).
+%-define(LOG_DEBUG(Msg,Data),sd:call(log,{debug,Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()},5000)).	
