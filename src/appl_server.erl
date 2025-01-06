@@ -356,26 +356,30 @@ handle_cast(_Request, State) ->
 	  {stop, Reason :: normal | term(), NewState :: term()}.
 
 handle_info({timeout,check_repo_update}, State) ->
-
-    case cmn_server:git_update_repo(?SpecsDir) of
-	{error,["Dir eexists ",_RepoDir]}->
-	    ok=case cmn_server:git_clone(?RepoGit) of
-		   ok->
-		       ?LOG_NOTICE("Repo dir didnt existed so a succesful cloned action is executed",[?SpecsDir]);
-		   {error,Reason}->
-		       ?LOG_WARNING("Failed during clone action ",[Reason])
-	       end;
-	{error,["Already updated ","application_specs"]}->
+    case cmn_server:git_is_repo_updated(?SpecsDir) of
+	true->
 	    ok;
-	{error,Reason}->
-	    ?LOG_WARNING("Failed to update ",[Reason]);
-	{ok,Info} ->
-	    ?LOG_NOTICE("Repo dir actions",[Info,?SpecsDir]),
-	    ok
+	{error,["RepoDir doesnt exists, need to clone",
+		?SpecsDir]}->
+	    case cmn_server:git_clone(?RepoGit) of
+		ok->
+		    ?LOG_NOTICE("Repo dir didnt existed so a succesful cloned action is executed",[?SpecsDir]);
+		{error,Reason}->
+		    ?LOG_WARNING("Failed during clone action ",[Reason])
+	    end;
+	false->
+	    case cmn_server:git_update_repo(?SpecsDir) of
+		{error,["Already updated ",?SpecsDir]}->
+		    ok;
+		{error,Reason}->
+		    ?LOG_WARNING("Failed to update ",[Reason]);
+		{ok,Info} ->
+		    ?LOG_NOTICE("Repo dir actions",[Info,?SpecsDir]),
+		    ok
+	    end
     end,
     {noreply, State};
-
-
+	
 handle_info(_Info, State) ->
     {noreply, State}.
 

@@ -38,7 +38,7 @@ start()->
       
     io:format("Test OK !!! ~p~n",[?MODULE]),
     timer:sleep(2000),
-    init:stop(),
+ %   init:stop(),
     ok.
 
 
@@ -172,6 +172,5 @@ cleanup()->
     rpc:call(Node,init,stop,[],5000),
     true=lib_vm:check_stopped(Node),
 
-    
 
     ok.
