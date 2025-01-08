@@ -197,11 +197,7 @@ clone_build_release(SpecsDir,ApplicationSpecFile)->
 	{ok,[Map]}->
 	    ApplDir=maps:get(application_dir,Map),
 	    GitUrl=maps:get(git_url,Map),
-	    
-	    PrivDir = code:priv_dir(appl_server),
-	    io:format("PrivDir ~p~n",[{PrivDir,?MODULE,?LINE}]),
-	    ScriptPath = filename:join([PrivDir, "clone_build_release.sh"]),
-	    CloneBuildResult=os:cmd(ScriptPath++" "++ApplDir++" "++GitUrl),
+	    CloneBuildResult=os:cmd("./clone_build_release.sh "++ApplDir++" "++GitUrl),
 	    ExecFilePath=maps:get(exec_file_path,Map),
 	    ExecFile=filename:join(ApplDir,ExecFilePath),
 	    case filelib:is_file(ExecFile) of
@@ -237,10 +233,7 @@ start_release(SpecsDir,ApplicationSpecFile)->
 		    ApplNode=list_to_atom(NodeName++"@"++Host),
 		    rpc:call(ApplNode,init,stop,[],6000),
 		    true=lib_vm:check_stopped(ApplNode),
-		    PrivDir = code:priv_dir(appl_server),
-		    io:format("PrivDir ~p~n",[{PrivDir,?MODULE,?LINE}]),
-		    ScriptPath = filename:join([PrivDir, "start_release.sh"]),
-		    StartResult=os:cmd(ScriptPath++" "++ExecFile++" "++"daemon"),
+		    StartResult=os:cmd("./start_release.sh "++ExecFile++" "++"daemon"),
 		    case lib_vm:check_started(ApplNode) of
 			false->
 			    {error,["Failed to start Application node",ApplNode,ApplicationSpecFile,StartResult]};
