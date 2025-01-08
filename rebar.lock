@@ -1,0 +1,12 @@
+[{<<"cmn_server">>,
+  {git,"https://github.com/joq62/cmn_server.git",
+       {ref,"2b77cd121460382565b0d5f99e036a593b469cba"}},
+  0},
+ {<<"log">>,
+  {git,"https://github.com/joq62/log.git",
+       {ref,"908830a6927efc7abf3184d49bb2c7b0017e3ff8"}},
+  0},
+ {<<"service_discovery">>,
+  {git,"https://github.com/joq62/service_discovery.git",
+       {ref,"bde0c87887bd3d44700fd2ab07ed1c866eb3bd19"}},
+  0}].

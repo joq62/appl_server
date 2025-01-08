@@ -84,7 +84,7 @@ active_applications([ApplicationSpecFile|T],SpecsDir,Acc)->
 			   %% Check if app is running
 			   App=maps:get(app,Map),
 			   case client:server_pid(App) of
-			       undefined->
+			       {error,["undefined",App]}->
 				   [{error,["Does not exists in service_discovery ",
 					    App, ApplicationSpecFile,SpecsDir]}|Acc];
 			       {ok,ServerPid}->
