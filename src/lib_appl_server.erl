@@ -199,7 +199,6 @@ clone_build_release(SpecsDir,ApplicationSpecFile)->
 	    GitUrl=maps:get(git_url,Map),
 	    
 	    PrivDir = code:priv_dir(appl_server),
-	    io:format("PrivDir ~p~n",[{PrivDir,?MODULE,?LINE}]),
 	    ScriptPath = filename:join([PrivDir, "clone_build_release.sh"]),
 	    CloneBuildResult=os:cmd(ScriptPath++" "++ApplDir++" "++GitUrl),
 	    ExecFilePath=maps:get(exec_file_path,Map),
@@ -238,7 +237,6 @@ start_release(SpecsDir,ApplicationSpecFile)->
 		    rpc:call(ApplNode,init,stop,[],6000),
 		    true=lib_vm:check_stopped(ApplNode),
 		    PrivDir = code:priv_dir(appl_server),
-		    io:format("PrivDir ~p~n",[{PrivDir,?MODULE,?LINE}]),
 		    ScriptPath = filename:join([PrivDir, "start_release.sh"]),
 		    StartResult=os:cmd(ScriptPath++" "++ExecFile++" "++"daemon"),
 		    case lib_vm:check_started(ApplNode) of
