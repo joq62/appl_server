@@ -6,6 +6,7 @@
 -define(MaxNumFiles,10).
 -define(MaxNumBytes,100000).
 
+-define(TestLog,"test_log.txt").
 %%%% Log Api -----------------------------------------------------------------------------
 
 -define(LOG_NOTICE(Msg,Data),rpc:cast(node(),log,notice,[Msg,Data,node(),self(),?MODULE,?FUNCTION_NAME,?LINE,erlang:timestamp()])).
