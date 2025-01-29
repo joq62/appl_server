@@ -196,18 +196,41 @@ clone_build_release(SpecsDir,ApplicationSpecFile)->
 	    {error,Reason};
 	{ok,[Map]}->
 	    ApplDir=maps:get(application_dir,Map),
+	    % Clean up old dir
+	    file:del_dir_r(ApplDir),
+	   % ok=file:make_dir(ApplDir),
+	    %% Clone
 	    GitUrl=maps:get(git_url,Map),
+	    CloenResult=os:cmd("git clone "++GitUrl),
+	    {ok,Root}=file:get_cwd(),
+	    FullPathApplDir=filename:join(Root,ApplDir),
+	    ok=file:set_cwd(FullPathApplDir),
+	    {ok,FullPathApplDir}=file:get_cwd(),
 	    
-	    PrivDir = code:priv_dir(appl_server),
-	    ScriptPath = filename:join([PrivDir, "clone_build_release.sh"]),
-	    CloneBuildResult=os:cmd(ScriptPath++" "++ApplDir++" "++GitUrl),
+	    %% rebar3 release
+	    {ok,Rebar3}=case os:getenv("REBAR3") of
+			    false ->
+				case os:getenv("HOME") of
+				    false->
+					{error,["Environment variable HOME not set"]};
+				    HomePath -> 
+					{ok,filename:join(HomePath,"rebar3")}
+					    
+				end;
+			    Path2Rebar3->
+				{ok,Path2Rebar3}
+			end, 
+	    Rebar3Result=os:cmd(Rebar3++" "++"release"),
+	    ok=file:set_cwd(Root),
+	    {ok,CheckedCwd}=file:get_cwd(),
+%	    io:format("Root, FullPathApplDir Rebar3,CheckedCwd,CloenResult,Rebar3Result ~p~n",[{Root, FullPathApplDir,Rebar3,CheckedCwd,CloenResult,Rebar3Result}]),
 	    ExecFilePath=maps:get(exec_file_path,Map),
-	    ExecFile=filename:join(ApplDir,ExecFilePath),
+	    ExecFile=filename:join(FullPathApplDir,ExecFilePath),
 	    case filelib:is_file(ExecFile) of
 		true->
 		    ok;
 		false->
-		    {error,["Failed to clone and build release with result",ApplicationSpecFile,CloneBuildResult]}
+		    {error,["Failed to clone and build release with result",ApplicationSpecFile,CloenResult]}
 	    
 	    end
     end.

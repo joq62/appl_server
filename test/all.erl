@@ -147,7 +147,7 @@ test4()->
     {ok,ServerPid}=client:server_pid(App),
     {ok,pong}=client:call(ServerPid,{ping,[]},5000),
     true=erlang:exit(ServerPid,kill),
-    timer:sleep(1000),
+    timer:sleep(2000),
     
     {ok,[]}=appl_server:active_applications(),
    

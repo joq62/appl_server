@@ -9,6 +9,6 @@ rm -rf $1
 mkdir $1
 git clone $2
 cd $1
-echo $REBAR3
-$REBAR3 release
+REBAR_PATH=$(command -v rebar3)
+$REBAR_PATH release
 cd ..
