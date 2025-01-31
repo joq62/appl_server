@@ -25,6 +25,9 @@
 
 %% Supporting and testing API
 -export([
+	 all_application_specs_files/0,
+	 all_apps/0,
+
 	 application_dir/1,
 	 git_url/1,
 	 exec_file_path/1,
@@ -113,6 +116,24 @@ application_dir(ApplicationSpecFile)->
 
 %% ------------------ Server API ------------------------------------
 
+
+%%--------------------------------------------------------------------
+%% @doc
+%% 
+%% @end
+%%--------------------------------------------------------------------
+-spec all_apps() -> {ok,[App::atom()]} | {error,Reason::term()}.
+all_apps()-> 
+    gen_server:call(?SERVER, {all_apps},infinity).
+
+%%--------------------------------------------------------------------
+%% @doc
+%% 
+%% @end
+%%--------------------------------------------------------------------
+-spec all_application_specs_files() -> {ok,[ApplicationSpecFiles::string()]} | {error,Reason::term()}.
+all_application_specs_files()-> 
+    gen_server:call(?SERVER, {all_application_specs_files},infinity).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -263,6 +284,14 @@ init([]) ->
 	  {stop, Reason :: term(), NewState :: term()}.
 
 %% ------------------ Server API ------------------------------------
+
+handle_call({all_apps}, _From, State) ->
+    Reply=lib_appl_server:all_apps(State#state.specs_dir),
+    {reply, Reply, State};
+
+handle_call({all_application_specs_files}, _From, State) ->
+    Reply=lib_appl_server:all_application_specs_files(State#state.specs_dir),
+    {reply, Reply, State};
 
 handle_call({wanted_applications}, _From, State) ->
     Reply=lib_appl_server:wanted_applications(State#state.specs_dir),

@@ -17,6 +17,9 @@
 %% API
 
 -export([
+	 all_application_specs_files/1,
+	 all_apps/1,
+
 	 clone_build_release/2,
 	 start_release/2,
 	 application_dir/2,
@@ -35,6 +38,40 @@
 
 	]).
 
+%%--------------------------------------------------------------------
+%% @doc
+%%   
+%% @end
+%%--------------------------------------------------------------------
+all_apps(SpecDir)->
+    {ok,ApplicationSpecFiles}=all_application_specs_files(SpecDir),
+    Apps=all_apps(ApplicationSpecFiles,SpecDir,[]),
+    {ok,Apps}.	     
+
+all_apps([],_SpecDir,Acc)->
+    Acc;
+all_apps([ApplSpecFile|T],SpecDir,Acc) ->
+    {ok,App}=app(SpecDir,ApplSpecFile),
+    NewAcc=case lists:member(App,Acc) of
+	       false->
+		   [App|Acc];
+	       true->
+		   Acc
+	   end,
+    all_apps(T,SpecDir,NewAcc).
+
+%%--------------------------------------------------------------------
+%% @doc
+%%   
+%% @end
+%%--------------------------------------------------------------------
+all_application_specs_files(SpecDir)->
+    {ok,Files}=file:list_dir(SpecDir),
+    FilesPath=[filename:join(SpecDir,SpecFile)||SpecFile<-Files],
+    L1=[{filename:basename(SpecFile),file:consult(SpecFile)}||SpecFile<-FilesPath,
+							      ?FileExt=:=filename:extension(SpecFile)],
+    ApplicationSpecFiles=[File||{File,{ok,_}}<-L1],
+    {ok,ApplicationSpecFiles}.	     
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -220,9 +257,9 @@ clone_build_release(SpecsDir,ApplicationSpecFile)->
 			    Path2Rebar3->
 				{ok,Path2Rebar3}
 			end, 
-	    Rebar3Result=os:cmd(Rebar3++" "++"release"),
+	    _Rebar3Result=os:cmd(Rebar3++" "++"release"),
 	    ok=file:set_cwd(Root),
-	    {ok,CheckedCwd}=file:get_cwd(),
+	    {ok,_CheckedCwd}=file:get_cwd(),
 %	    io:format("Root, FullPathApplDir Rebar3,CheckedCwd,CloenResult,Rebar3Result ~p~n",[{Root, FullPathApplDir,Rebar3,CheckedCwd,CloenResult,Rebar3Result}]),
 	    ExecFilePath=maps:get(exec_file_path,Map),
 	    ExecFile=filename:join(FullPathApplDir,ExecFilePath),

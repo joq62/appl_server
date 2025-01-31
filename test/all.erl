@@ -30,6 +30,7 @@
 start()->
    
     ok=setup(),
+    ok=test0(),
     ok=test1(),
     ok=test2(),
     ok=test3(),
@@ -71,6 +72,18 @@ setup()->
     true=lib_vm:check_stopped(Node),
 
     ok.
+%%-----------------------------------------------
+%% Function: available_hosts()
+%% Description: Based on hosts.config file checks which hosts are avaible
+%% Returns: List({HostId,Ip,SshPort,Uid,Pwd}
+%% --------------------------------------------------------------------
+test0()->
+    io:format("Start ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]), 
+    {ok,AllApps}=appl_server:all_apps(),
+    [add_test]=AllApps,
+    ok.  
+
+
 %%-----------------------------------------------
 %% Function: available_hosts()
 %% Description: Based on hosts.config file checks which hosts are avaible
